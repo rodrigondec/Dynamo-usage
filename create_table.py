@@ -1,36 +1,40 @@
-from __future__ import print_function # Python 2/3 compatibility
 import boto3
 
-dynamodb = boto3.resource('dynamodb', region_name='us-west-2', endpoint_url="http://localhost:8000")
+# Get the service resource.
+dynamodb = boto3.resource('dynamodb')
 
-
+# Create the DynamoDB table.
 table = dynamodb.create_table(
-    TableName='Movies',
+    TableName='users',
     KeySchema=[
         {
-            'AttributeName': 'year',
-            'KeyType': 'HASH'  #Partition key
+            'AttributeName': 'username',
+            'KeyType': 'HASH'
         },
         {
-            'AttributeName': 'title',
-            'KeyType': 'RANGE'  #Sort key
+            'AttributeName': 'last_name',
+            'KeyType': 'RANGE'
         }
     ],
     AttributeDefinitions=[
         {
-            'AttributeName': 'year',
-            'AttributeType': 'N'
+            'AttributeName': 'username',
+            'AttributeType': 'S'
         },
         {
-            'AttributeName': 'title',
+            'AttributeName': 'last_name',
             'AttributeType': 'S'
         },
 
     ],
     ProvisionedThroughput={
-        'ReadCapacityUnits': 10,
-        'WriteCapacityUnits': 10
+        'ReadCapacityUnits': 5,
+        'WriteCapacityUnits': 5
     }
 )
 
-print("Table status:", table.table_status)
+# Wait until the table exists.
+table.meta.client.get_waiter('table_exists').wait(TableName='users')
+
+# Print out some data about the table.
+print(table.item_count)
