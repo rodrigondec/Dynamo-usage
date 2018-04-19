@@ -16,3 +16,22 @@ response = table.query(
 )
 items = response['Items']
 print(items)
+
+response = table.scan(
+    FilterExpression=Attr('age').lt(27)
+)
+items = response['Items']
+print(items)
+
+response = table.scan(
+    FilterExpression=Attr('first_name').begins_with('J') & Attr('account_type').eq('super_user')
+)
+items = response['Items']
+print(items)
+
+response = table.scan(
+    FilterExpression=Attr('address.state').eq('CA')
+)
+items = response['Items']
+print(items)
+
